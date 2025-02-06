@@ -1,0 +1,19 @@
+#To setup LinkedScraper bot 
+Just use your LinkedIn Id and password and find credentials JSON and replace it 
+
+
+#To setup Email bot 
+use your email Id and APP PASSWORD Dont use native gmail password
+
+#How to create a APP PASSWORD In gmail
+To create an app password for Gmail, you can: 
+Sign in to your Google account
+Go to Security
+Under Signing in to Google, click App Passwords or search it in search bar
+Click Select app and choose the app you're using
+Click Select device and choose the device you're using
+Click Generate
+Copy the password that was generated
+Paste the password into a safe place
+
+Repace filepath with your resume path check the HTML code for any changes Like company name , Signature

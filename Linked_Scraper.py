@@ -47,7 +47,7 @@ def extract_emails_from_posts(driver, KEYWORDS):
             driver.get(search_url)
             time.sleep(10)
             filters(driver)
-            click_show_more_results(driver)
+            click_show_more_results(driver,keyword)
             posts = driver.find_elements(By.CLASS_NAME, "feed-shared-update-v2")
             for post in posts:
                 # Your existing post interaction logic
@@ -86,8 +86,12 @@ def extract_emails_from_post(post):
     
     return emails
 
-def click_show_more_results(driver):
+def click_show_more_results(driver,keyword):
+    """Scrolls until the 'Show more results' button is found, clicks it up to 20 times, and ensures all posts are loaded."""
+
     max_clicks=20
+    max_scroll_attempts = 10  # Maximum times to scroll while searching for the button
+    click_count = 0  # Counter for button clicks
     """Click 'Show more results' button if available"""
     for _ in range(max_clicks):
         try:
@@ -99,7 +103,6 @@ def click_show_more_results(driver):
         )
             
              # Continuously scroll until "Show more results" button is found
-            max_scroll_attempts = 10
             scroll_attempt = 0
             button_found = False
             
@@ -111,14 +114,14 @@ def click_show_more_results(driver):
                 # Try to find the button
                 try:
                     show_more_button = WebDriverWait(driver, 10).until(
-            EC.visibility_of_element_located(
-                (By.XPATH, "//button[contains(@class, 'scaffold-finite-scroll__load-button') and contains(., 'Show more results')]")
-            )
-        )
+             EC.presence_of_element_located(
+                        (By.XPATH, "//button[contains(@class, 'scaffold-finite-scroll__load-button') and contains(., 'Show more results')]")
+                    )
+                )
                     if show_more_button.is_displayed():
                         button_found = True
                         print(f"Found 'Show more results' button after {scroll_attempt + 1} scrolls")
-                        break
+                        
                 except:
                     scroll_attempt += 1
                     print(f"Scrolling attempt {scroll_attempt}/{_}")
@@ -129,15 +132,23 @@ def click_show_more_results(driver):
 
             
             # Scroll to button and click with JavaScript
-            driver.execute_script("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", show_more_button)
-            time.sleep(6)
+            scroll_attempt = 0  # Reset scroll attempts before clicking
+            while True and scroll_attempt == 20:
+                driver.execute_script("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", show_more_button)
+                time.sleep(2)  # Allow smooth scroll effect
+                scroll_attempt += 1
+
+                
+
             driver.execute_script("arguments[0].click();", show_more_button)
-            
+            print(f"Clicked 'Show more results' button ({click_count + 1}/{max_clicks}) for {keyword}")
+
             # Wait for new content to load
             time.sleep(random.uniform(1.5, 3.5))  # Random delay to mimic human behavior
             WebDriverWait(driver, 15).until(
                 EC.presence_of_element_located((By.CLASS_NAME, "feed-shared-update-v2"))
             )
+            click_count += 1
             
         except Exception as e:
             print(f"No more 'Show more results' button or loading failed: {str(e)}")
@@ -174,8 +185,8 @@ def filters(driver):
 # Main automation logic
 def Scraper():
     credentials = {
-        "linkedin": {"username": "", "password": ""},
-    } #Replace it with your linkedIN credentials
+        "linkedin": {"username": "krishna7072.m@gmail.com", "password": "marketing@2024"},
+    }
 
 
     for portal, creds in credentials.items():
@@ -186,7 +197,8 @@ def Scraper():
                 "c2c", "java developer", "sr. full stack java developer", 
                 "full stack java developer", "java full stack developer", 
                 "java backend developer", "java engineer", "software engineer","java"
-            ] #Replace it with your keywords
+                ,"full stack developer","backend developer","java engineer"
+            ]
             
             emails = extract_emails_from_posts(driver, KEYWORDS)
             save_emails_to_excel(emails)
@@ -197,5 +209,5 @@ def Scraper():
     driver.quit()
     
 if __name__ == "__main__":
-    print("Job application scheduler started.")
+    print("LinkedIN Post Scraper Started.")
     Scraper()
