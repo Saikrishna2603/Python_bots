@@ -185,7 +185,7 @@ def filters(driver):
 # Main automation logic
 def Scraper():
     credentials = {
-        "linkedin": {"username": "krishna7072.m@gmail.com", "password": "marketing@2024"},
+        "linkedin": {"username": "", "password": ""},
     }
 
 
